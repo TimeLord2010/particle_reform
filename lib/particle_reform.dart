@@ -15,10 +15,12 @@ class ParticleReform extends StatefulWidget {
     super.key,
     required this.child,
     required this.isFormed,
+    this.maxDistance = 100,
   });
 
   final Widget child;
   final bool isFormed;
+  final double maxDistance;
 
   @override
   State<ParticleReform> createState() => _ParticleReformState();
@@ -91,66 +93,68 @@ class _ParticleReformState extends State<ParticleReform>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Trigger a capture once layout is available
-        if (!_isCapturing && (_imageBytes == null)) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _captureImage(constraints.maxWidth, constraints.maxHeight);
-          });
-        }
+    return ClipRRect(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Trigger a capture once layout is available
+          if (!_isCapturing && (_imageBytes == null)) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _captureImage(constraints.maxWidth, constraints.maxHeight);
+            });
+          }
 
-        if (!_isInitialized && _imageBytes != null) {
-          // initialize particles once we have image bytes
-          _initializeParticles(constraints.maxWidth, constraints.maxHeight);
-          _isInitialized = true;
-        }
+          if (!_isInitialized && _imageBytes != null) {
+            // initialize particles once we have image bytes
+            _initializeParticles(constraints.maxWidth, constraints.maxHeight);
+            _isInitialized = true;
+          }
 
-        return AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                // The child rendered inside a RepaintBoundary so we can capture its pixels.
-                // This instance is used only for capture and lives beneath the particles.
-                if (_imageBytes == null)
-                  Opacity(
-                    opacity: 0.01,
-                    child: RepaintBoundary(
-                      key: _repaintKey,
+          return AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  // The child rendered inside a RepaintBoundary so we can capture its pixels.
+                  // This instance is used only for capture and lives beneath the particles.
+                  if (_imageBytes == null)
+                    Opacity(
+                      opacity: 0.01,
+                      child: RepaintBoundary(
+                        key: _repaintKey,
+                        child: SizedBox(
+                          width: constraints.maxWidth,
+                          height: constraints.maxHeight,
+                          child: widget.child,
+                        ),
+                      ),
+                    ),
+
+                  // Particles painted on top. Hide them only when formed AND animation is complete.
+                  if (!widget.isFormed || _controller.value > 0.0)
+                    CustomPaint(
+                      size: Size(constraints.maxWidth, constraints.maxHeight),
+                      painter: _ParticlePainter(
+                        particles: _particles,
+                        animationValue: _animation.value,
+                        isFormed: widget.isFormed,
+                      ),
+                    ),
+
+                  // When formed and animation complete, show the real child and hide particles.
+                  if (widget.isFormed && _controller.value == 0.0)
+                    Positioned.fill(
                       child: SizedBox(
                         width: constraints.maxWidth,
                         height: constraints.maxHeight,
                         child: widget.child,
                       ),
                     ),
-                  ),
-
-                // Particles painted on top. Hide them only when formed AND animation is complete.
-                if (!widget.isFormed || _controller.value > 0.0)
-                  CustomPaint(
-                    size: Size(constraints.maxWidth, constraints.maxHeight),
-                    painter: _ParticlePainter(
-                      particles: _particles,
-                      animationValue: _animation.value,
-                      isFormed: widget.isFormed,
-                    ),
-                  ),
-
-                // When formed and animation complete, show the real child and hide particles.
-                if (widget.isFormed && _controller.value == 0.0)
-                  Positioned.fill(
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                      child: widget.child,
-                    ),
-                  ),
-              ],
-            );
-          },
-        );
-      },
+                ],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -244,8 +248,8 @@ class _ParticleReformState extends State<ParticleReform>
         final color = Color.fromARGB(a, r, g, b);
 
         // Precompute a scatter offset so each particle moves deterministically during animation
-        final scatterX = (_random.nextDouble() - 0.5) * 100;
-        final scatterY = (_random.nextDouble() - 0.5) * 100;
+        final scatterX = (_random.nextDouble() - 0.5) * widget.maxDistance;
+        final scatterY = (_random.nextDouble() - 0.5) * widget.maxDistance;
 
         final particle = Particle(
           originalPosition: Offset(x * particleSize, y * particleSize),

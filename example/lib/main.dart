@@ -30,17 +30,24 @@ class _MainAppState extends State<MainApp> {
                 },
                 child: Text(isFormed ? 'Unform' : 'Form'),
               ),
-              SizedBox(height: 100),
+              SizedBox(height: 10),
               Expanded(
-                child: SizedBox(
-                  width: 500,
+                child: Container(
+                  color: const Color.fromARGB(30, 244, 67, 54),
                   child: ParticleReform(
                     isFormed: isFormed,
-                    child: Text(
-                      'Hello World!',
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.bold,
+                    maxDistance: 500,
+                    child: Center(
+                      child: Padding(
+                        key: ValueKey('text'),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Hello World!',
+                          style: TextStyle(
+                            fontSize: 38,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
