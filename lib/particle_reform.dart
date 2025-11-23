@@ -136,7 +136,6 @@ class _ParticleReformState extends State<ParticleReform>
                       painter: _ParticlePainter(
                         particles: _particles,
                         animationValue: _animation.value,
-                        isFormed: widget.isFormed,
                       ),
                     ),
 
@@ -274,13 +273,8 @@ class _ParticleReformState extends State<ParticleReform>
 class _ParticlePainter extends CustomPainter {
   final List<Particle> particles;
   final double animationValue;
-  final bool isFormed;
 
-  _ParticlePainter({
-    required this.particles,
-    required this.animationValue,
-    required this.isFormed,
-  });
+  _ParticlePainter({required this.particles, required this.animationValue});
 
   @override
   void paint(Canvas canvas, Size size) {
