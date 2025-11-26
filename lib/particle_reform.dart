@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:particle_reform/effects/particle_effect.dart';
 import 'package:particle_reform/effects/scatter.dart';
 import 'package:particle_reform/particle.dart';
@@ -46,6 +47,11 @@ class _ParticleReformState extends State<ParticleReform>
   double? _imagePixelRatio;
   bool _isCapturing = false;
 
+  // For continuous animation effects
+  Ticker? _continuousTicker;
+  double _elapsedTime = 0.0;
+  bool _needsContinuousAnimation = false;
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +73,27 @@ class _ParticleReformState extends State<ParticleReform>
   @override
   void dispose() {
     _controller.dispose();
+    _continuousTicker?.dispose();
     super.dispose();
+  }
+
+  void _startContinuousAnimation() {
+    if (_continuousTicker != null && _continuousTicker!.isActive) return;
+
+    _continuousTicker?.dispose();
+    _continuousTicker = createTicker((elapsed) {
+      setState(() {
+        _elapsedTime = elapsed.inMilliseconds / 1000.0;
+      });
+    });
+    _continuousTicker!.start();
+  }
+
+  void _stopContinuousAnimation() {
+    _continuousTicker?.stop();
+    _continuousTicker?.dispose();
+    _continuousTicker = null;
+    _elapsedTime = 0.0;
   }
 
   @override
@@ -78,9 +104,17 @@ class _ParticleReformState extends State<ParticleReform>
       if (widget.isFormed) {
         // Animate from scattered (1.0) to formed (0.0)
         _controller.animateTo(0.0);
+        // Stop continuous animation when forming
+        if (_needsContinuousAnimation) {
+          _stopContinuousAnimation();
+        }
       } else {
         // Animate from formed (0.0) to scattered (1.0)
         _controller.animateTo(1.0);
+        // Start continuous animation when scattering
+        if (_needsContinuousAnimation) {
+          _startContinuousAnimation();
+        }
       }
     }
 
@@ -137,6 +171,8 @@ class _ParticleReformState extends State<ParticleReform>
                       painter: _ParticlePainter(
                         particles: _particles,
                         animationValue: _animation.value,
+                        effect: widget.effect,
+                        elapsedTime: _elapsedTime,
                       ),
                     ),
 
@@ -241,6 +277,18 @@ class _ParticleReformState extends State<ParticleReform>
     );
     _particles.addAll(particles);
 
+    // Check if this effect needs continuous animation
+    // Test with a dummy particle to see if getAnimatedOffset returns non-null
+    if (_particles.isNotEmpty) {
+      final testOffset = widget.effect.getAnimatedOffset(_particles.first, 0.0);
+      _needsContinuousAnimation = testOffset != null;
+
+      // Start continuous animation if needed and not formed
+      if (_needsContinuousAnimation && !widget.isFormed) {
+        _startContinuousAnimation();
+      }
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {});
     });
@@ -250,8 +298,15 @@ class _ParticleReformState extends State<ParticleReform>
 class _ParticlePainter extends CustomPainter {
   final List<Particle> particles;
   final double animationValue;
+  final ParticleEffect effect;
+  final double elapsedTime;
 
-  _ParticlePainter({required this.particles, required this.animationValue});
+  _ParticlePainter({
+    required this.particles,
+    required this.animationValue,
+    required this.effect,
+    required this.elapsedTime,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -260,15 +315,30 @@ class _ParticlePainter extends CustomPainter {
         ..color = particle.color
         ..style = PaintingStyle.fill;
 
-      // animationValue represents the scatter amount:
-      // 0.0 = particles at original positions (formed)
-      // 1.0 = particles scattered
-      final progress = animationValue;
+      // Check if effect provides time-based animation
+      final animatedOffset = effect.getAnimatedOffset(particle, elapsedTime);
 
-      final displayed = Offset(
-        particle.originalPosition.dx + particle.scatterOffset.dx * progress,
-        particle.originalPosition.dy + particle.scatterOffset.dy * progress,
-      );
+      final Offset displayed;
+      if (animatedOffset != null) {
+        // Use time-based animation from effect
+        // animationValue still controls the transition between formed and scattered
+        // When animationValue = 0.0 (formed), show original position
+        // When animationValue = 1.0 (scattered), show animated position
+        displayed = Offset(
+          particle.originalPosition.dx + animatedOffset.dx * animationValue,
+          particle.originalPosition.dy + animatedOffset.dy * animationValue,
+        );
+      } else {
+        // Use static scatter offset (original behavior)
+        // animationValue represents the scatter amount:
+        // 0.0 = particles at original positions (formed)
+        // 1.0 = particles scattered
+        final progress = animationValue;
+        displayed = Offset(
+          particle.originalPosition.dx + particle.scatterOffset.dx * progress,
+          particle.originalPosition.dy + particle.scatterOffset.dy * progress,
+        );
+      }
 
       canvas.drawRect(Rect.fromLTWH(displayed.dx, displayed.dy, 1, 1), paint);
     }
