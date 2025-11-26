@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -18,11 +17,15 @@ class ParticleReform extends StatefulWidget {
     required this.child,
     required this.isFormed,
     this.effect = const Scatter(),
+    this.duration = const Duration(seconds: 1),
+    this.curve = Curves.easeOut,
   });
 
   final Widget child;
   final bool isFormed;
   final ParticleEffect effect;
+  final Duration duration;
+  final Curve curve;
 
   @override
   State<ParticleReform> createState() => _ParticleReformState();
@@ -43,19 +46,15 @@ class _ParticleReformState extends State<ParticleReform>
   double? _imagePixelRatio;
   bool _isCapturing = false;
 
-  final Random _random = Random();
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
     _animation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
+    // ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     // Set initial state based on isFormed
     // When not formed, controller should be at 1.0 (scattered)
