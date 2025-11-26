@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:particle_reform/effects/particle_effect.dart';
+import 'package:particle_reform/effects/scatter.dart';
 import 'package:particle_reform/particle.dart';
 
 /// Breaks down the target widget into pixels and animate then moving around
@@ -15,12 +17,12 @@ class ParticleReform extends StatefulWidget {
     super.key,
     required this.child,
     required this.isFormed,
-    this.maxDistance = 100,
+    this.effect = const Scatter(),
   });
 
   final Widget child;
   final bool isFormed;
-  final double maxDistance;
+  final ParticleEffect effect;
 
   @override
   State<ParticleReform> createState() => _ParticleReformState();
@@ -207,28 +209,22 @@ class _ParticleReformState extends State<ParticleReform>
     debugPrint('Initializing particles');
     _particles.clear();
 
-    // particleSize in logical pixels. Using 1 will try to get every pixel.
-    final double particleSize = 1.0;
-
-    final cols = (width / particleSize).ceil();
-    final rows = (height / particleSize).ceil();
-
     final imgW = _imageWidth!;
     final imgH = _imageHeight!;
     final pixelRatio = _imagePixelRatio ?? 1.0;
 
-    for (int y = 0; y < rows; y++) {
-      for (int x = 0; x < cols; x++) {
-        // Map logical coordinate to image pixel coordinates
-        final imgX = (x * particleSize * pixelRatio).floor();
-        final imgY = (y * particleSize * pixelRatio).floor();
+    var particles = widget.effect.initialize(
+      container: Size(width, height),
+      reader: (x, y) {
+        final imgX = (x * pixelRatio).floor();
+        final imgY = (y * pixelRatio).floor();
 
         if (imgX < 0 || imgX >= imgW || imgY < 0 || imgY >= imgH) {
-          continue;
+          return null;
         }
 
         final index = (imgY * imgW + imgX) * 4;
-        if (index + 3 >= _imageBytes!.length) continue;
+        if (index + 3 >= _imageBytes!.length) return null;
 
         // rawRgba -> bytes are in R, G, B, A order
         final r = _imageBytes![index];
@@ -239,31 +235,13 @@ class _ParticleReformState extends State<ParticleReform>
         // Check if there is a pixel at the position (alpha threshold)
         // small threshold to ignore fully transparent pixels
         final hasPixelAtPosition = a > 10;
-        if (!hasPixelAtPosition) {
-          continue;
-        }
+        if (!hasPixelAtPosition) return null;
 
-        // Get the actual color at the position.
-        final color = Color.fromARGB(a, r, g, b);
+        return Color.fromARGB(a, r, g, b);
+      },
+    );
+    _particles.addAll(particles);
 
-        // Precompute a scatter offset so each particle moves deterministically during animation
-        final scatterX = (_random.nextDouble() - 0.5) * widget.maxDistance;
-        final scatterY = (_random.nextDouble() - 0.5) * widget.maxDistance;
-
-        final particle = Particle(
-          originalPosition: Offset(x * particleSize, y * particleSize),
-          color: color,
-          scatterOffset: Offset(scatterX, scatterY),
-        );
-        _particles.add(particle);
-      }
-    }
-
-    // After initializing particles, ensure the painter repaints
-    // Do not call setState here — _initializeParticles may be invoked from build().
-    // The build method sets _isInitialized = true after calling this method,
-    // which prevents repeated initialization and ensures the painter will paint
-    // with the newly created _particles.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {});
     });

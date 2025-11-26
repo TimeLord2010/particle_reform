@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:particle_reform/effects/scatter.dart';
 import 'package:particle_reform/particle_reform.dart';
 
 void main() {
@@ -36,7 +37,7 @@ class _MainAppState extends State<MainApp> {
                   color: const Color.fromARGB(30, 244, 67, 54),
                   child: ParticleReform(
                     isFormed: isFormed,
-                    maxDistance: 1000,
+                    effect: Scatter(maxDistance: 1000),
                     child: Center(
                       child: Padding(
                         key: ValueKey('text'),
