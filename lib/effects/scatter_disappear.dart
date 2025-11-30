@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:particle_reform/particle.dart';
+import 'package:particle_reform/particles/scatter_particle.dart';
 
 import 'particle_effect.dart';
 
@@ -10,12 +10,12 @@ class ScatterDisappear with ParticleEffect {
   const ScatterDisappear();
 
   @override
-  List<Particle> initialize({
+  List<ScatterParticle> initialize({
     required Size container,
     required Color? Function(int x, int y) reader,
   }) {
     var random = Random();
-    var particles = <Particle>[];
+    var particles = <ScatterParticle>[];
 
     // Calculate the diagonal distance from center to corner
     // This ensures particles go far enough to be outside the view
@@ -39,7 +39,7 @@ class ScatterDisappear with ParticleEffect {
         final scatterX = cos(angle) * scatterDistance;
         final scatterY = sin(angle) * scatterDistance;
 
-        final particle = Particle(
+        final particle = ScatterParticle(
           originalPosition: Offset(x.toDouble(), y.toDouble()),
           color: color,
           scatterOffset: Offset(scatterX, scatterY),

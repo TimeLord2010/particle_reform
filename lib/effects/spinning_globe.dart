@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:particle_reform/particle.dart';
+import 'package:particle_reform/particles/particle.dart';
+import 'package:particle_reform/particles/scatter_particle.dart';
 
 import 'particle_effect.dart';
 
@@ -66,7 +67,7 @@ class SpinningGlobe with ParticleEffect {
         // To decode: globeRadius = round(dy / 100), phi = dy - globeRadius * 100
         final encodedDy = phi + globeRadius * 100;
 
-        final particle = Particle(
+        final particle = ScatterParticle(
           originalPosition: Offset(x.toDouble(), y.toDouble()),
           color: color,
           scatterOffset: Offset(theta, encodedDy),
@@ -79,41 +80,7 @@ class SpinningGlobe with ParticleEffect {
   }
 
   @override
-  Offset? getAnimatedOffset(Particle particle, double time) {
-    // Decode the stored values
-    final theta = particle.scatterOffset.dx;
-    final encodedDy = particle.scatterOffset.dy;
-
-    // Decode globeRadius and phi from encodedDy
-    // encodedDy = phi + globeRadius * 100
-    // Since phi is in [-π/2, π/2] ≈ [-1.57, 1.57], we can use round to get globeRadius
-    final globeRadius = (encodedDy / 100).round().toDouble();
-    final phi = encodedDy - globeRadius * 100;
-
-    // Convert back to Cartesian coordinates on unit sphere
-    // normY = sin(phi)
-    // normX = cos(phi) * sin(theta)
-    // normZ = cos(phi) * cos(theta)
-    final cosPhi = cos(phi);
-    final normY = sin(phi);
-    final normX = cosPhi * sin(theta);
-
-    // Apply rotation around Y-axis by adding to theta
-    final rotatedTheta = theta + time * rotationSpeed;
-
-    // Convert rotated spherical coordinates back to Cartesian
-    final rotatedNormX = cosPhi * sin(rotatedTheta);
-    final rotatedNormY = normY; // Y doesn't change when rotating around Y-axis
-    // rotatedNormZ = cosPhi * cos(rotatedTheta); // Not needed for 2D projection
-
-    // Calculate the offset from original position to new position
-    // Original position: (centerX + normX * R, centerY + normY * R)
-    // New position: (centerX + rotatedNormX * R, centerY + rotatedNormY * R)
-    // Offset: ((rotatedNormX - normX) * R, (rotatedNormY - normY) * R)
-    final offsetX = (rotatedNormX - normX) * globeRadius;
-    final offsetY =
-        (rotatedNormY - normY) * globeRadius; // This is 0 for Y-axis rotation
-
-    return Offset(offsetX, offsetY);
+  Offset getAnimatedOffset(Particle particle, double animationProgress) {
+    throw Exception('Not implemented');
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:particle_reform/effects/scatter_disappear.dart';
+import 'package:particle_reform/effects/spinning_circle.dart';
 import 'package:particle_reform/particle_reform.dart';
 
 void main() {
@@ -36,7 +36,7 @@ class _MainAppState extends State<MainApp> {
               Expanded(
                 child: ParticleReform(
                   isFormed: isFormed,
-                  effect: ScatterDisappear(),
+                  effect: SpinningCircle(radius: 100),
                   duration: Duration(seconds: 1, milliseconds: 500),
                   curve: Curves.easeIn,
                   child: Center(child: _content()),

@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:particle_reform/effects/particle_effect.dart';
 import 'package:particle_reform/effects/scatter.dart';
-import 'package:particle_reform/particle.dart';
+import 'package:particle_reform/particles/particle.dart';
 
 /// Breaks down the target widget into pixels and animate then moving around
 /// constantly.
@@ -172,7 +172,6 @@ class _ParticleReformState extends State<ParticleReform>
                         particles: _particles,
                         animationValue: _animation.value,
                         effect: widget.effect,
-                        elapsedTime: _elapsedTime,
                       ),
                     ),
 
@@ -279,9 +278,9 @@ class _ParticleReformState extends State<ParticleReform>
 
     // Check if this effect needs continuous animation
     // Test with a dummy particle to see if getAnimatedOffset returns non-null
-    if (_particles.isNotEmpty) {
-      final testOffset = widget.effect.getAnimatedOffset(_particles.first, 0.0);
-      _needsContinuousAnimation = testOffset != null;
+    var effect = widget.effect;
+    if (_particles.isNotEmpty && effect.hasAnimation) {
+      _needsContinuousAnimation = true;
 
       // Start continuous animation if needed and not formed
       if (_needsContinuousAnimation && !widget.isFormed) {
@@ -299,13 +298,11 @@ class _ParticlePainter extends CustomPainter {
   final List<Particle> particles;
   final double animationValue;
   final ParticleEffect effect;
-  final double elapsedTime;
 
   _ParticlePainter({
     required this.particles,
     required this.animationValue,
     required this.effect,
-    required this.elapsedTime,
   });
 
   @override
@@ -316,29 +313,18 @@ class _ParticlePainter extends CustomPainter {
         ..style = PaintingStyle.fill;
 
       // Check if effect provides time-based animation
-      final animatedOffset = effect.getAnimatedOffset(particle, elapsedTime);
+      final animatedOffset = effect.hasAnimation
+          ? effect.getAnimatedOffset(particle, animationValue)
+          : Offset.zero;
 
-      final Offset displayed;
-      if (animatedOffset != null) {
-        // Use time-based animation from effect
-        // animationValue still controls the transition between formed and scattered
-        // When animationValue = 0.0 (formed), show original position
-        // When animationValue = 1.0 (scattered), show animated position
-        displayed = Offset(
-          particle.originalPosition.dx + animatedOffset.dx * animationValue,
-          particle.originalPosition.dy + animatedOffset.dy * animationValue,
-        );
-      } else {
-        // Use static scatter offset (original behavior)
-        // animationValue represents the scatter amount:
-        // 0.0 = particles at original positions (formed)
-        // 1.0 = particles scattered
-        final progress = animationValue;
-        displayed = Offset(
-          particle.originalPosition.dx + particle.scatterOffset.dx * progress,
-          particle.originalPosition.dy + particle.scatterOffset.dy * progress,
-        );
-      }
+      // Use time-based animation from effect
+      // animationValue still controls the transition between formed and scattered
+      // When animationValue = 0.0 (formed), show original position
+      // When animationValue = 1.0 (scattered), show animated position
+      final displayed = Offset(
+        particle.originalPosition.dx + animatedOffset.dx * animationValue,
+        particle.originalPosition.dy + animatedOffset.dy * animationValue,
+      );
 
       canvas.drawRect(Rect.fromLTWH(displayed.dx, displayed.dy, 1, 1), paint);
     }
