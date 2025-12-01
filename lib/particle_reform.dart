@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:particle_reform/effects/particle_effect.dart';
 import 'package:particle_reform/effects/scatter.dart';
 import 'package:particle_reform/particles/particle.dart';
+import 'package:particle_reform/particles/scatter_particle.dart';
 
 /// Breaks down the target widget into pixels and animate then moving around
 /// constantly.
@@ -312,10 +313,17 @@ class _ParticlePainter extends CustomPainter {
         ..color = particle.color
         ..style = PaintingStyle.fill;
 
-      // Check if effect provides time-based animation
-      final animatedOffset = effect.hasAnimation
-          ? effect.getAnimatedOffset(particle, animationValue)
-          : Offset.zero;
+      ui.Offset getOffset() {
+        if (effect.hasAnimation) {
+          return effect.getAnimatedOffset(particle, animationValue);
+        }
+        if (particle is ScatterParticle) {
+          return particle.scatterOffset;
+        }
+        return Offset.zero;
+      }
+
+      ui.Offset animatedOffset = getOffset();
 
       // Use time-based animation from effect
       // animationValue still controls the transition between formed and scattered

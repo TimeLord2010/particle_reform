@@ -1,6 +1,8 @@
+import 'package:example/usecase.dart';
 import 'package:flutter/material.dart';
+import 'package:particle_reform/effects/scatter.dart';
+import 'package:particle_reform/effects/scatter_disappear.dart';
 import 'package:particle_reform/effects/spinning_circle.dart';
-import 'package:particle_reform/particle_reform.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,53 +16,29 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  bool isFormed = false;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  isFormed = !isFormed;
-                  setState(() {});
-                },
-                child: Text(isFormed ? 'Unform' : 'Form'),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: ParticleReform(
-                  isFormed: isFormed,
-                  effect: SpinningCircle(radius: 100),
-                  duration: Duration(seconds: 1, milliseconds: 500),
-                  curve: Curves.easeIn,
-                  child: Center(child: _content()),
-                ),
-              ),
-            ],
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 350,
+              childAspectRatio: 2,
+            ),
+            itemBuilder: (context, index) {
+              var effect = switch (index) {
+                0 => Scatter(),
+                1 => ScatterDisappear(),
+                2 => SpinningCircle(),
+                _ => Scatter(),
+              };
+              var item = Usecase(effect: effect);
+              return item;
+            },
+            itemCount: 3,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _content() {
-    return Padding(
-      key: ValueKey('text'),
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.blueAccent,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Text(
-          'Hello World!',
-          style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
         ),
       ),
     );
