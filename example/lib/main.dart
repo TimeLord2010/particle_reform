@@ -21,24 +21,29 @@ class _MainAppState extends State<MainApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Center(
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 350,
-              childAspectRatio: 2,
-            ),
-            itemBuilder: (context, index) {
-              var effect = switch (index) {
-                0 => Scatter(),
-                1 => ScatterDisappear(),
-                2 => SpinningCircle(),
-                _ => Scatter(),
-              };
-              var item = Usecase(effect: effect);
-              return item;
-            },
-            itemCount: 3,
+        body: GridView.builder(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 350,
+            childAspectRatio: 2,
           ),
+          itemBuilder: (context, index) {
+            var effect = switch (index) {
+              0 => Scatter(),
+              1 => ScatterDisappear(),
+              2 => SpinningCircle(),
+              _ => Scatter(),
+            };
+
+            var label = switch (index) {
+              1 => 'Scatter disappear',
+              2 => 'SpinningCircle',
+              _ => 'Scatter',
+            };
+
+            var item = Usecase(effect: effect, label: label);
+            return item;
+          },
+          itemCount: 3,
         ),
       ),
     );

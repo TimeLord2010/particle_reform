@@ -3,8 +3,9 @@ import 'package:particle_reform/effects/particle_effect.dart';
 import 'package:particle_reform/particle_reform.dart';
 
 class Usecase extends StatefulWidget {
-  const Usecase({super.key, required this.effect});
+  const Usecase({super.key, required this.effect, required this.label});
 
+  final String label;
   final ParticleEffect effect;
 
   @override
@@ -16,18 +17,25 @@ class _UsecaseState extends State<Usecase> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 400,
+      padding: EdgeInsets.all(5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: () {
-              isFormed = !isFormed;
-              setState(() {});
-            },
-            child: Text(isFormed ? 'Unform' : 'Form'),
+          Row(
+            children: [
+              Text(widget.label),
+              Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  isFormed = !isFormed;
+                  setState(() {});
+                },
+                child: Text(isFormed ? 'Unform' : 'Form'),
+              ),
+            ],
           ),
           SizedBox(height: 10),
           Expanded(
