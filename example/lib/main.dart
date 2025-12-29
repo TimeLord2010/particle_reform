@@ -23,7 +23,7 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         body: GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 350,
+            maxCrossAxisExtent: 400,
             childAspectRatio: 1.5,
           ),
           itemBuilder: (context, index) {

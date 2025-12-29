@@ -72,8 +72,21 @@ class SpinningCircle with ParticleEffect {
   Offset getAnimatedOffset(Particle particle, double animationProgress) {
     SpinParticle spinParticle = particle as SpinParticle;
 
-    // Return offset from original position to the fixed circle position
-    // No rotation during transition - particles take straight path
-    return spinParticle.initialPosition - spinParticle.originalPosition;
+    // Calculate the initial angle from center to initialPosition
+    final dx = spinParticle.initialPosition.dx - spinParticle.center.dx;
+    final dy = spinParticle.initialPosition.dy - spinParticle.center.dy;
+    final initialAngle = atan2(dy, dx);
+
+    // Add rotation based on elapsed time (one full rotation per second)
+    // animationProgress here represents elapsed time in seconds
+    final rotation = animationProgress * 2 * pi;
+    final newAngle = initialAngle + rotation;
+
+    // Calculate new position on the circle
+    final x = spinParticle.center.dx + spinParticle.radius * cos(newAngle);
+    final y = spinParticle.center.dy + spinParticle.radius * sin(newAngle);
+
+    // Return offset from original position to the rotating circle position
+    return Offset(x, y) - spinParticle.originalPosition;
   }
 }

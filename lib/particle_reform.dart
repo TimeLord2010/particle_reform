@@ -172,6 +172,7 @@ class _ParticleReformState extends State<ParticleReform>
                       painter: _ParticlePainter(
                         particles: _particles,
                         animationValue: _animation.value,
+                        elapsedTime: _elapsedTime,
                         effect: widget.effect,
                       ),
                     ),
@@ -298,11 +299,13 @@ class _ParticleReformState extends State<ParticleReform>
 class _ParticlePainter extends CustomPainter {
   final List<Particle> particles;
   final double animationValue;
+  final double elapsedTime;
   final ParticleEffect effect;
 
   _ParticlePainter({
     required this.particles,
     required this.animationValue,
+    required this.elapsedTime,
     required this.effect,
   });
 
@@ -315,7 +318,7 @@ class _ParticlePainter extends CustomPainter {
 
       ui.Offset getOffset() {
         if (effect.hasAnimation) {
-          return effect.getAnimatedOffset(particle, animationValue);
+          return effect.getAnimatedOffset(particle, elapsedTime);
         }
         if (particle is ScatterParticle) {
           return particle.scatterOffset;
