@@ -1,6 +1,6 @@
 name: particle_reform
 description: "A Flutter package that breaks down any widget into pixel particles and animates them with customizable effects. Watch your widgets scatter, spin, and reform with beautiful particle animations."
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/TimeLord2010/particle_reform
 
 environment:
