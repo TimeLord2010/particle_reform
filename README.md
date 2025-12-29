@@ -1,5 +1,9 @@
 A Flutter package that breaks down any widget into pixel particles and animates them with customizable effects. Watch your widgets scatter, spin, and reform with beautiful particle animations.
 
+
+https://github.com/user-attachments/assets/c65ae00e-3161-4117-a785-09e6adf86be0
+
+
 ## Usage
 
 Wrap any widget with `ParticleReform` and control the animation with the `isFormed` parameter:
