@@ -85,7 +85,6 @@ class SpinningCircle with ParticleEffect {
     final x = spinParticle.center.dx + spinParticle.radius * cos(newAngle);
     final y = spinParticle.center.dy + spinParticle.radius * sin(newAngle);
 
-    return spinParticle.originalPosition;
-    // return Offset(x, y); // Commented for debuging
+    return Offset(x, y) - spinParticle.originalPosition;
   }
 }

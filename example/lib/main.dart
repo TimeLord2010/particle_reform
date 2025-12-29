@@ -24,7 +24,7 @@ class _MainAppState extends State<MainApp> {
         body: GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 350,
-            childAspectRatio: 2,
+            childAspectRatio: 1.5,
           ),
           itemBuilder: (context, index) {
             var effect = switch (index) {

@@ -18,7 +18,7 @@ class _UsecaseState extends State<Usecase> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 500,
       padding: EdgeInsets.all(5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
