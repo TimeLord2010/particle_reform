@@ -9,6 +9,18 @@ import 'package:particle_reform/effects/scatter.dart';
 import 'package:particle_reform/particles/particle.dart';
 import 'package:particle_reform/particles/scatter_particle.dart';
 
+// Export effect classes
+export 'package:particle_reform/effects/particle_effect.dart';
+export 'package:particle_reform/effects/scatter.dart';
+export 'package:particle_reform/effects/scatter_disappear.dart';
+export 'package:particle_reform/effects/spinning_circle.dart';
+export 'package:particle_reform/effects/spinning_globe.dart';
+
+// Export particle classes
+export 'package:particle_reform/particles/particle.dart';
+export 'package:particle_reform/particles/scatter_particle.dart';
+export 'package:particle_reform/particles/spin_particle.dart';
+
 /// Breaks down the target widget into pixels and animate then moving around
 /// constantly.
 /// When [isFormed] is set to `true`, they stop their movement and gather to

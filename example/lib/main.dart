@@ -1,8 +1,6 @@
 import 'package:example/usecase.dart';
 import 'package:flutter/material.dart';
-import 'package:particle_reform/effects/scatter.dart';
-import 'package:particle_reform/effects/scatter_disappear.dart';
-import 'package:particle_reform/effects/spinning_circle.dart';
+import 'package:particle_reform/particle_reform.dart';
 
 void main() {
   runApp(const MainApp());
