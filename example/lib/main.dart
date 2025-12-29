@@ -16,6 +16,8 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  bool useBackground = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +25,7 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         body: GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 400,
+            maxCrossAxisExtent: 500,
             childAspectRatio: 1.5,
           ),
           itemBuilder: (context, index) {
@@ -40,7 +42,11 @@ class _MainAppState extends State<MainApp> {
               _ => 'Scatter',
             };
 
-            var item = Usecase(effect: effect, label: label);
+            var item = Usecase(
+              effect: effect,
+              label: label,
+              useBackground: useBackground,
+            );
             return item;
           },
           itemCount: 3,

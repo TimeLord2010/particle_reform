@@ -3,10 +3,16 @@ import 'package:particle_reform/effects/particle_effect.dart';
 import 'package:particle_reform/particle_reform.dart';
 
 class Usecase extends StatefulWidget {
-  const Usecase({super.key, required this.effect, required this.label});
+  const Usecase({
+    super.key,
+    required this.effect,
+    required this.label,
+    required this.useBackground,
+  });
 
   final String label;
   final ParticleEffect effect;
+  final bool useBackground;
 
   @override
   State<Usecase> createState() => _UsecaseState();
@@ -59,7 +65,7 @@ class _UsecaseState extends State<Usecase> {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.blueAccent,
+            color: widget.useBackground ? Colors.blueAccent : null,
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Text(
