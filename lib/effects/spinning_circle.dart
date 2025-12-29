@@ -18,16 +18,11 @@ class SpinningCircle with ParticleEffect {
     required Size container,
     required Color? Function(int x, int y) reader,
   }) {
-    print('Width: ${container.width}');
-    print('Height: ${container.height}');
-
     final centerX = container.width / 2;
     final centerY = container.height / 2;
     final center = Offset(centerX, centerY);
-    print('Center: $center');
 
     final circleRadius = radius ?? min(container.width, container.height) / 2.5;
-    print('Cirle radius: $circleRadius');
 
     final particles = <SpinParticle>[];
     // Iterate through all pixels in the container
@@ -90,7 +85,7 @@ class SpinningCircle with ParticleEffect {
     final x = spinParticle.center.dx + spinParticle.radius * cos(newAngle);
     final y = spinParticle.center.dy + spinParticle.radius * sin(newAngle);
 
-    return spinParticle.initialPosition;
+    return spinParticle.originalPosition;
     // return Offset(x, y); // Commented for debuging
   }
 }
