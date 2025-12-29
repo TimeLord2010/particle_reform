@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:example/usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:particle_reform/particle_reform.dart';
@@ -30,7 +32,11 @@ class _MainAppState extends State<MainApp> {
             var effect = switch (index) {
               1 => ScatterDisappear(),
               2 => SpinningCircle(animationSpeed: 0.1, strokeWidth: 30),
-              3 => SpinningGlobe(),
+              3 => SpinningGlobe(
+                animationSpeed: 0.2,
+                cameraLatitude: pi / 6, // 30° down from above
+                cameraLongitude: pi / 6, // 30° to the right
+              ),
               _ => Scatter(),
             };
 
