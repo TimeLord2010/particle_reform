@@ -16,7 +16,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  bool useBackground = false;
+  bool useBackground = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _MainAppState extends State<MainApp> {
             var effect = switch (index) {
               0 => Scatter(),
               1 => ScatterDisappear(),
-              2 => SpinningCircle(),
+              2 => SpinningCircle(animationSpeed: 0.1, strokeWidth: 30),
               _ => Scatter(),
             };
 

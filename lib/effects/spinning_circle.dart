@@ -14,7 +14,17 @@ class SpinningCircle with ParticleEffect {
   /// The thickness of the ring. If null, defaults to 20% of the radius.
   final double? strokeWidth;
 
-  const SpinningCircle({this.radius, this.strokeWidth});
+  /// Animation speed multiplier. Default is 1.0.
+  final double _animationSpeed;
+
+  const SpinningCircle({
+    this.radius,
+    this.strokeWidth,
+    double animationSpeed = 1.0,
+  }) : _animationSpeed = animationSpeed;
+
+  @override
+  double get animationSpeed => _animationSpeed;
 
   /// Generates a Gaussian random value using Box-Muller transform.
   double _gaussianRandom(Random random, double mean, double stdDev) {

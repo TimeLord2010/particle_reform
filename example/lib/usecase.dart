@@ -61,7 +61,6 @@ class _UsecaseState extends State<Usecase> {
   Widget _content() {
     return Center(
       child: Padding(
-        key: ValueKey('text'),
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(

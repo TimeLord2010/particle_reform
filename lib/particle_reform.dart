@@ -318,7 +318,7 @@ class _ParticlePainter extends CustomPainter {
 
       ui.Offset getOffset() {
         if (effect.hasAnimation) {
-          return effect.getAnimatedOffset(particle, elapsedTime);
+          return effect.getAnimatedOffset(particle, elapsedTime * effect.animationSpeed);
         }
         if (particle is ScatterParticle) {
           return particle.scatterOffset;
