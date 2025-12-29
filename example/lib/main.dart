@@ -28,15 +28,16 @@ class _MainAppState extends State<MainApp> {
           ),
           itemBuilder: (context, index) {
             var effect = switch (index) {
-              0 => Scatter(),
               1 => ScatterDisappear(),
               2 => SpinningCircle(animationSpeed: 0.1, strokeWidth: 30),
+              3 => SpinningGlobe(),
               _ => Scatter(),
             };
 
             var label = switch (index) {
               1 => 'Scatter disappear',
-              2 => 'SpinningCircle',
+              2 => 'Spinning circle',
+              3 => 'Spinning globe',
               _ => 'Scatter',
             };
 
@@ -47,7 +48,7 @@ class _MainAppState extends State<MainApp> {
             );
             return item;
           },
-          itemCount: 3,
+          itemCount: 4,
         ),
       ),
     );

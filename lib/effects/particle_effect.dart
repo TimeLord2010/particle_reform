@@ -23,4 +23,13 @@ mixin ParticleEffect {
   Offset getAnimatedOffset(Particle particle, double animationProgress) {
     throw Exception('Not implemented');
   }
+
+  /// Optional: Override to provide dynamic opacity for particles.
+  /// Returns opacity multiplier [0.0 - 1.0] for effects like depth-based fading.
+  /// Default returns null (use particle's original color opacity).
+  ///
+  /// [particle] - The particle to get opacity for
+  /// [animationProgress] - Elapsed time in seconds, scaled by [animationSpeed]
+  double? getAnimatedOpacity(Particle particle, double animationProgress) =>
+      null;
 }

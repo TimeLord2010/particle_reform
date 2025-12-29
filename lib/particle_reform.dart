@@ -20,6 +20,7 @@ export 'package:particle_reform/effects/spinning_globe.dart';
 export 'package:particle_reform/particles/particle.dart';
 export 'package:particle_reform/particles/scatter_particle.dart';
 export 'package:particle_reform/particles/spin_particle.dart';
+export 'package:particle_reform/particles/globe_particle.dart';
 
 /// Breaks down the target widget into pixels and animate then moving around
 /// constantly.
@@ -324,10 +325,6 @@ class _ParticlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (var particle in particles) {
-      final paint = Paint()
-        ..color = particle.color
-        ..style = PaintingStyle.fill;
-
       ui.Offset getOffset() {
         if (effect.hasAnimation) {
           return effect.getAnimatedOffset(particle, elapsedTime * effect.animationSpeed);
@@ -339,6 +336,27 @@ class _ParticlePainter extends CustomPainter {
       }
 
       ui.Offset animatedOffset = getOffset();
+
+      // Calculate animated opacity if effect supports it
+      double opacityMultiplier = 1.0;
+      if (effect.hasAnimation) {
+        opacityMultiplier = effect.getAnimatedOpacity(
+              particle,
+              elapsedTime * effect.animationSpeed,
+            ) ??
+            1.0;
+      }
+
+      // Apply opacity with animation transition
+      // When animationValue = 0.0 (formed), use full original opacity
+      // When animationValue = 1.0 (scattered), use animated opacity
+      final baseAlpha = particle.color.a;
+      final targetAlpha = baseAlpha * opacityMultiplier;
+      final finalAlpha = baseAlpha + (targetAlpha - baseAlpha) * animationValue;
+
+      final paint = Paint()
+        ..color = particle.color.withValues(alpha: finalAlpha.clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
 
       // Use time-based animation from effect
       // animationValue still controls the transition between formed and scattered
