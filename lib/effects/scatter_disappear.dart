@@ -65,6 +65,7 @@ class ScatterDisappear with ParticleEffect {
           originalPosition: Offset(x.toDouble(), y.toDouble()),
           color: color,
           scatterOffset: Offset(scatterX, scatterY),
+          isVisibleWhenScattered: true,
         );
         particles.add(particle);
       }

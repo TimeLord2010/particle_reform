@@ -37,7 +37,7 @@ class _MainAppState extends State<MainApp> {
                 cameraLatitude: pi / 6, // 30° down from above
                 cameraLongitude: pi / 6, // 30° to the right
               ),
-              _ => Scatter(),
+              _ => Scatter(particleDensity: 10),
             };
 
             var label = switch (index) {

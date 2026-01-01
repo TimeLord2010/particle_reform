@@ -337,7 +337,8 @@ class _ParticlePainter extends CustomPainter {
 
       ui.Offset animatedOffset = getOffset();
 
-      // Calculate animated opacity if effect supports it
+      // Calculate opacity multiplier from effect
+      // This works for both animation effects and state-based effects
       double opacityMultiplier = 1.0;
       if (effect.hasAnimation) {
         opacityMultiplier = effect.getAnimatedOpacity(
@@ -345,6 +346,9 @@ class _ParticlePainter extends CustomPainter {
               elapsedTime * effect.animationSpeed,
             ) ??
             1.0;
+      } else {
+        // For non-animation effects, still check for static opacity control
+        opacityMultiplier = effect.getAnimatedOpacity(particle, 0.0) ?? 1.0;
       }
 
       // Apply opacity with animation transition
