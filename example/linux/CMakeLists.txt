@@ -1,5 +1,9 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.13)
+
+# Explicitly set C++ compiler to g++ to avoid CXX environment variable issues
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+
 project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
