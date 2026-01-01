@@ -5,9 +5,15 @@ import 'package:particle_reform/particles/scatter_particle.dart';
 
 import 'particle_effect.dart';
 
+/// A particle effect that scatters pixels from their original positions.
+///
+/// This effect creates a scatter animation where each pixel/particle moves
+/// in a random direction from its original position.
 class Scatter with ParticleEffect {
   final double maxDistance;
 
+  /// The effect works by generating a random offset within [maxDistance] for
+  /// each pixel.
   const Scatter({this.maxDistance = 100});
 
   @override
