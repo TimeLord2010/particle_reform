@@ -1,8 +1,24 @@
 A Flutter package that breaks down any widget into pixel particles and animates them with customizable effects. Watch your widgets scatter, spin, and reform with beautiful particle animations.
 
-
 https://github.com/user-attachments/assets/c65ae00e-3161-4117-a785-09e6adf86be0
 
+## Available Effects
+
+### 1. **Scatter**
+
+Scatters pixels from their original positions in random directions.
+
+### 2. **ScatterDisappear**
+
+Scatters particles outside the viewable area of the widget.
+
+### 3. **SpinningCircle**
+
+Animates particles into a spinning ring with Gaussian distribution.
+
+### 4. **SpinningGlobe**
+
+Creates a 3D spinning globe effect with depth perception.
 
 ## Usage
 
